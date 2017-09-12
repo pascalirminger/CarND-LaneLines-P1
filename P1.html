@@ -11894,7 +11894,7 @@ div#notebook {
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x11262b780&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x11b1736d8&gt;</pre>
 </div>
 
 </div>
@@ -13546,8 +13546,7 @@ EP1W22pbbavdw9v/B48rs7cxFkAbAAAAAElFTkSuQmCC
     <span class="n">masked_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">masked_image</span>
 
-
-<span class="k">def</span> <span class="nf">draw_lines</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">draw_lines</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    NOTE: this is the function you might want to use as a starting point once you want to </span>
 <span class="sd">    average/extrapolate the line segments you detect to map out the full</span>
@@ -13564,9 +13563,30 @@ EP1W22pbbavdw9v/B48rs7cxFkAbAAAAAElFTkSuQmCC
 <span class="sd">    If you want to make the lines semi-transparent, think about combining</span>
 <span class="sd">    this function with the weighted_img() function below</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">leftX</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">leftY</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rightX</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rightY</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">img_width</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">img_mid</span> <span class="o">=</span> <span class="n">img_width</span><span class="o">/</span><span class="mi">2</span>
+    
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-            <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">x1</span> <span class="o">&lt;</span> <span class="n">img_mid</span><span class="p">):</span>
+                <span class="n">leftX</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">])</span>
+                <span class="n">leftY</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rightX</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">])</span>
+                <span class="n">rightY</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">leftX</span> <span class="ow">and</span> <span class="n">leftY</span><span class="p">):</span>
+        <span class="n">f_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">leftX</span><span class="p">,</span> <span class="n">leftY</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">f_l</span><span class="p">(</span><span class="mi">0</span><span class="p">))),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">img_mid</span><span class="o">-</span><span class="mi">50</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">f_l</span><span class="p">(</span><span class="n">img_mid</span><span class="o">-</span><span class="mi">50</span><span class="p">))),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="n">rightX</span> <span class="ow">and</span> <span class="n">rightY</span><span class="p">):</span>
+        <span class="n">f_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">rightX</span><span class="p">,</span> <span class="n">rightY</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">img_mid</span><span class="o">+</span><span class="mi">50</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">f_r</span><span class="p">(</span><span class="n">img_mid</span><span class="o">+</span><span class="mi">50</span><span class="p">))),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">img_width</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">f_r</span><span class="p">(</span><span class="n">img_width</span><span class="p">))),</span> <span class="n">color</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">hough_lines</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">min_line_len</span><span class="p">,</span> <span class="n">max_line_gap</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -13886,7 +13906,7 @@ imageio.plugins.ffmpeg.download()</code></pre>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|█████████▉| 221/222 [00:02&lt;00:00, 95.98it/s]
+<pre>100%|█████████▉| 221/222 [00:02&lt;00:00, 96.37it/s]
 </pre>
 </div>
 </div>
@@ -13900,8 +13920,8 @@ imageio.plugins.ffmpeg.download()</code></pre>
 <pre>[MoviePy] Done.
 [MoviePy] &gt;&gt;&gt;&gt; Video ready: test_videos_output/solidWhiteRight.mp4 
 
-CPU times: user 1.96 s, sys: 583 ms, total: 2.55 s
-Wall time: 2.66 s
+CPU times: user 2.08 s, sys: 589 ms, total: 2.67 s
+Wall time: 2.65 s
 </pre>
 </div>
 </div>
@@ -14020,7 +14040,7 @@ Wall time: 2.66 s
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|█████████▉| 681/682 [00:07&lt;00:00, 93.60it/s]
+<pre>100%|█████████▉| 681/682 [00:07&lt;00:00, 89.73it/s]
 </pre>
 </div>
 </div>
@@ -14034,8 +14054,8 @@ Wall time: 2.66 s
 <pre>[MoviePy] Done.
 [MoviePy] &gt;&gt;&gt;&gt; Video ready: test_videos_output/solidYellowLeft.mp4 
 
-CPU times: user 6.34 s, sys: 1.64 s, total: 7.97 s
-Wall time: 7.67 s
+CPU times: user 6.73 s, sys: 1.64 s, total: 8.36 s
+Wall time: 7.97 s
 </pre>
 </div>
 </div>
