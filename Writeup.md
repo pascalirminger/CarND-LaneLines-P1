@@ -16,7 +16,7 @@ The goals / steps of this project are the following:
 
 ### **Description**
 
-The pipeline consisted of six steps:
+The pipeline consists of six steps:
 1. Converts the image into a gray scaled version using the ```cv2.cvtColor()``` function.
 2. Applies a Gaussian blur to the image using the ```cv2.GaussianBlur()``` function.
 3. Uses a Canny transformation to find edges on the image using the ```cv2.Canny()``` function.

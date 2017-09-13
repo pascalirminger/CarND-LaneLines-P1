@@ -11894,7 +11894,7 @@ div#notebook {
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x11b1736d8&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x11936f8d0&gt;</pre>
 </div>
 
 </div>
@@ -13573,10 +13573,11 @@ EP1W22pbbavdw9v/B48rs7cxFkAbAAAAAElFTkSuQmCC
     
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">x1</span> <span class="o">&lt;</span> <span class="n">img_mid</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">y2</span><span class="o">-</span><span class="n">y1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x2</span><span class="o">-</span><span class="n">x1</span><span class="p">)</span> <span class="c1"># slope</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">&lt;</span> <span class="o">-.</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">x1</span> <span class="o">&lt;</span> <span class="n">img_mid</span> <span class="ow">and</span> <span class="n">x2</span> <span class="o">&lt;</span> <span class="n">img_mid</span><span class="p">):</span>
                 <span class="n">leftX</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">])</span>
                 <span class="n">leftY</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">m</span> <span class="o">&gt;</span> <span class="o">.</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">x1</span> <span class="o">&gt;</span> <span class="n">img_mid</span> <span class="ow">and</span> <span class="n">x2</span> <span class="o">&gt;</span> <span class="n">img_mid</span><span class="p">):</span>
                 <span class="n">rightX</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">])</span>
                 <span class="n">rightY</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">])</span>
     
@@ -13696,26 +13697,33 @@ EP1W22pbbavdw9v/B48rs7cxFkAbAAAAAElFTkSuQmCC
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Build your pipeline that will draw lane lines on the test_images</span>
 <span class="c1"># then save them to the test_images directory.</span>
 
-<span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">plotResult</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Convert the image to grayscale</span>
     <span class="n">gray</span> <span class="o">=</span> <span class="n">grayscale</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
     
-    <span class="c1"># Plot grayscale image</span>
-    <span class="c1">#plt.figure()</span>
-    <span class="c1">#plt.imshow(gray, cmap=&#39;gray&#39;)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">plotResult</span><span class="p">):</span>
+        <span class="c1"># Plot grayscale image</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
     
     <span class="c1"># Define a kernel size for Gaussian smoothing / blurring</span>
     <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">blur_gray</span> <span class="o">=</span> <span class="n">gaussian_blur</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">plotResult</span><span class="p">):</span>
+        <span class="c1"># Plot blurred image</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blur_gray</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys_r&#39;</span><span class="p">)</span>
     
     <span class="c1"># Define the parameters for Canny and run it</span>
     <span class="n">low_threshold</span> <span class="o">=</span> <span class="mi">50</span>
     <span class="n">high_threshold</span> <span class="o">=</span> <span class="mi">150</span>
     <span class="n">edges</span> <span class="o">=</span> <span class="n">canny</span><span class="p">(</span><span class="n">blur_gray</span><span class="p">,</span> <span class="n">low_threshold</span><span class="p">,</span> <span class="n">high_threshold</span><span class="p">)</span>
     
-    <span class="c1"># Plot edges</span>
-    <span class="c1">#plt.figure()</span>
-    <span class="c1">#plt.imshow(edges, cmap=&#39;Greys_r&#39;)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">plotResult</span><span class="p">):</span>
+        <span class="c1"># Plot edges</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys_r&#39;</span><span class="p">)</span>
     
     <span class="c1"># Define a four sided polygon to mask</span>
     <span class="n">imshape</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
@@ -13727,9 +13735,10 @@ EP1W22pbbavdw9v/B48rs7cxFkAbAAAAAElFTkSuQmCC
         <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
     <span class="n">masked_image</span> <span class="o">=</span> <span class="n">region_of_interest</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
     
-    <span class="c1"># Plot masked image</span>
-    <span class="c1">#plt.figure()</span>
-    <span class="c1">#plt.imshow(masked_image, cmap=&#39;Greys_r&#39;)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">plotResult</span><span class="p">):</span>
+        <span class="c1"># Plot masked image</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masked_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys_r&#39;</span><span class="p">)</span>
     
     <span class="c1"># Define the Hough transform parameters</span>
     <span class="c1"># Make a blank the same size as our image to draw on</span>
@@ -13743,16 +13752,18 @@ EP1W22pbbavdw9v/B48rs7cxFkAbAAAAAElFTkSuQmCC
     <span class="c1"># Output &quot;lines&quot; is an array containing endpoints of detected line segments</span>
     <span class="n">line_image</span> <span class="o">=</span> <span class="n">hough_lines</span><span class="p">(</span><span class="n">masked_image</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">min_line_length</span><span class="p">,</span> <span class="n">max_line_gap</span><span class="p">)</span>
     
-    <span class="c1"># Plot line image</span>
-    <span class="c1">#plt.figure()</span>
-    <span class="c1">#plt.imshow(line_img, cmap=&#39;Greys_r&#39;)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">plotResult</span><span class="p">):</span>
+        <span class="c1"># Plot line image</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">line_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys_r&#39;</span><span class="p">)</span>
     
     <span class="c1"># Weight image</span>
     <span class="n">weighted_image</span> <span class="o">=</span> <span class="n">weighted_img</span><span class="p">(</span><span class="n">line_image</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
     
-    <span class="c1"># Plot weighted image</span>
-    <span class="c1">#plt.figure()</span>
-    <span class="c1">#plt.imshow(weighted_image)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">plotResult</span><span class="p">):</span>
+        <span class="c1"># Plot weighted image</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">weighted_image</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">weighted_image</span>
 </pre></div>
@@ -13906,7 +13917,7 @@ imageio.plugins.ffmpeg.download()</code></pre>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|█████████▉| 221/222 [00:02&lt;00:00, 96.37it/s]
+<pre>100%|█████████▉| 221/222 [00:02&lt;00:00, 94.98it/s]
 </pre>
 </div>
 </div>
@@ -13920,8 +13931,8 @@ imageio.plugins.ffmpeg.download()</code></pre>
 <pre>[MoviePy] Done.
 [MoviePy] &gt;&gt;&gt;&gt; Video ready: test_videos_output/solidWhiteRight.mp4 
 
-CPU times: user 2.08 s, sys: 589 ms, total: 2.67 s
-Wall time: 2.65 s
+CPU times: user 2.07 s, sys: 600 ms, total: 2.67 s
+Wall time: 2.68 s
 </pre>
 </div>
 </div>
@@ -14040,7 +14051,7 @@ Wall time: 2.65 s
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|█████████▉| 681/682 [00:07&lt;00:00, 89.73it/s]
+<pre>100%|█████████▉| 681/682 [00:07&lt;00:00, 91.29it/s]
 </pre>
 </div>
 </div>
@@ -14054,8 +14065,8 @@ Wall time: 2.65 s
 <pre>[MoviePy] Done.
 [MoviePy] &gt;&gt;&gt;&gt; Video ready: test_videos_output/solidYellowLeft.mp4 
 
-CPU times: user 6.73 s, sys: 1.64 s, total: 8.36 s
-Wall time: 7.97 s
+CPU times: user 6.69 s, sys: 1.65 s, total: 8.34 s
+Wall time: 7.84 s
 </pre>
 </div>
 </div>
